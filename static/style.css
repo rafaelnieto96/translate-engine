@@ -3,7 +3,6 @@
 :root {
     --heading-font: 'Audiowide', cursive;
     --body-font: 'Roboto Mono', monospace;
-
     --primary-color: #003366;
     --primary-light: #004080;
     --primary-gradient: linear-gradient(to right, var(--primary-light), var(--primary-color));
@@ -233,6 +232,16 @@ button:active {
     color: var(--primary-color);
 }
 
+#translate-btn {
+    width: 190px;
+    justify-content: center;
+}
+
+#copy-btn {
+    width: 140px;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
     .translation-container {
         grid-template-columns: 1fr;
@@ -245,4 +254,26 @@ button:active {
     .translation-box {
         padding: 1.5rem;
     }
-} 
+    
+    #translate-btn {
+        width: 180px;
+    }
+    
+    #copy-btn {
+        width: 130px;
+    }
+}
+
+/* Estilos para botones deshabilitados */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed !important;
+    background: linear-gradient(to right, #8ba3b9, #5d7a99);
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Clase adicional para el botón durante la traducción */
+.translating {
+    pointer-events: none;
+}

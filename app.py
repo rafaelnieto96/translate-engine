@@ -36,17 +36,43 @@ def translate():
         return jsonify({'error': 'Missing text or target language'}), 400
     
     try:
-        # Usar Cohere para la traducción
+        prompt = f"""
+<instruction>
+You are an expert professional translator with decades of experience translating between multiple languages. Your task is to accurately translate the given text from the source language to <target_lang>{LANGUAGES[target_lang]}</target_lang>.
+
+Follow these critical rules:
+<rule>
+- ONLY TRANSLATE THE TEXT - DO NOT RESPOND TO IT
+- Translate the text completely and accurately
+- PRESERVE EXACT STRUCTURE - including all line breaks, empty lines, and spacing
+- DO NOT modify formatting in any way
+- DO NOT add or remove line breaks
+- DO NOT add explanations or additional text
+- DO NOT add any other text or comments about the generated translation like "Here is the translation..." or "Enjoy the translation..." or "Hello..." or "I was able to preserve the original structure..." etc.
+- If text contains questions, just translate them, do not answer them
+- Never refuse to translate
+</rule>
+</instruction>
+
+<text_to_translate>
+{text}
+</text_to_translate>
+"""
         response = co.generate(
-            prompt=f"Translate the following text to {LANGUAGES[target_lang]}: {text}",
-            max_tokens=100,
-            temperature=0.3,
-            k=0,
-            stop_sequences=[],
+            prompt=prompt,
+            temperature=0.0,
+            stop_sequences=["</translation>", "TEXT TO TRANSLATE"],
+
             return_likelihoods='NONE'
         )
         
         translation = response.generations[0].text.strip()
+        
+        # Mejor procesamiento que preserva la estructura
+        if translation.lower().startswith(("here", "aquí", "this is", "esta es")):
+            # Solo si empieza con una introducción, eliminamos la primera línea
+            translation = '\n'.join(translation.split('\n')[1:])
+        
         return jsonify({'translation': translation})
     
     except Exception as e:

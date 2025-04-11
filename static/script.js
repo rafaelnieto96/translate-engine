@@ -14,7 +14,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
+            // Desactivar botón y aplicar estilos visuales
             translateBtn.disabled = true;
+            translateBtn.classList.add('translating');
+            
+            // Limpiar contenido previo
+            outputText.value = '';
+            
             translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traduciendo...';
 
             const response = await fetch('/translate', {
@@ -40,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
         } finally {
             translateBtn.disabled = false;
+            translateBtn.classList.remove('translating');
             translateBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Traducir';
         }
     }

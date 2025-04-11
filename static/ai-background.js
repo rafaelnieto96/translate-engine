@@ -95,29 +95,33 @@ class Neuron {
 }
 
 function drawNeuralConnections() {
-    neurons.forEach((a, i) => {
-        let others = neurons.slice(i + 1)
-            .map(b => ({ neuron: b, dist: dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y) }))
-            .sort((x, y) => x.dist - y.dist)
-            .slice(0, MAX_CONNECTIONS);
+  neurons.forEach((a, i) => {
+      let others = neurons.slice(i + 1)
+          .map(b => ({ neuron: b, dist: dist(a.pos.x, a.pos.y, b.pos.x, b.pos.y) }))
+          .sort((x, y) => x.dist - y.dist)
+          .slice(0, MAX_CONNECTIONS);
 
-        others.forEach(({ neuron: b, dist }) => {
-            if (dist < ACTIVATION_DISTANCE * 1.8) {
-                let alpha = map(dist, 0, ACTIVATION_DISTANCE * 1.8, 255, 0);
-                let lineWidth = map(dist, 0, ACTIVATION_DISTANCE * 1.8,
-                    window.innerWidth < 768 ? 2 : 3,
-                    window.innerWidth < 768 ? 0.3 : 0.5);
+      others.forEach(({ neuron: b, dist }) => {
+          if (dist < ACTIVATION_DISTANCE * 1.8) {
+              // Mantener opacidad más consistente
+              let alpha = map(dist, 0, ACTIVATION_DISTANCE * 1.8, 255, 50);
+              
+              // Líneas mucho más finas
+              let lineWidth = map(dist, 0, ACTIVATION_DISTANCE * 1.8,
+                  window.innerWidth < 768 ? 0.8 : 1.0,  // Reducido considerablemente
+                  window.innerWidth < 768 ? 0.1 : 0.15); // Valores mínimos muy finos
+              
+              // Efecto de pulso reducido
+              let pulseSpeed = window.innerWidth < 768 ? 0.02 : 0.03;
+              let pulse = (sin(frameCount * pulseSpeed + dist * 0.01) + 1) * 0.3 + 0.7;
+              alpha *= pulse;
 
-                let pulseSpeed = window.innerWidth < 768 ? 0.03 : 0.05;
-                let pulse = (sin(frameCount * pulseSpeed + dist * 0.01) + 1) * 0.5;
-                alpha *= pulse;
-
-                stroke(0, 51, 102, alpha); // Azul oscuro
-                strokeWeight(lineWidth);
-                line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
-            }
-        });
-    });
+              stroke(0, 51, 102, alpha);
+              strokeWeight(lineWidth);
+              line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
+          }
+      });
+  });
 }
 
 function globalPulseEffect() {
