@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>AI Translator</h1>
+            </div>
+            <div class="subtitle">
+                <p>Traducción inteligente con IA</p>
+            </div>
+        </header>
+
+        <main class="translation-container">
+            <div class="translation-box">
+                <div class="text-area">
+                    <textarea id="input-text" placeholder="Escribe el texto a traducir..."></textarea>
+                </div>
+                <div class="controls">
+                    <select id="target-language">
+                        {% for code, name in languages.items() %}
+                        <option value="{{ code }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button id="translate-btn">
+                        <i class="fas fa-exchange-alt"></i> Traducir
+                    </button>
+                </div>
+            </div>
+            
+            <div class="translation-box">
+                <div class="text-area">
+                    <textarea id="output-text" readonly placeholder="Traducción aparecerá aquí..."></textarea>
+                </div>
+                <div class="controls">
+                    <button id="copy-btn">
+                        <i class="fas fa-copy"></i> Copiar
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='ai-background.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
