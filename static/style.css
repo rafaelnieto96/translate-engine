@@ -4,23 +4,23 @@
     --heading-font: 'Audiowide', cursive;
     --body-font: 'Roboto Mono', monospace;
 
-    --primary-color: #00b4d8;
-    --primary-light: #48cae4;
+    --primary-color: #003366;
+    --primary-light: #004080;
     --primary-gradient: linear-gradient(to right, var(--primary-light), var(--primary-color));
-    --secondary-light: #90e0ef;
-    --background-color: transparent;
-    --text-color: #ffffff;
-    --card-bg: rgba(160, 160, 160, 0.2);
-    --card-bg-hover: rgba(72, 202, 228, 0.2);
-    --card-border: rgba(180, 180, 180, 0.2);
-    --card-border-hover: rgba(72, 202, 228, 0.4);
-    --text-shadow: rgba(0, 180, 216, 0.3);
+    --secondary-light: #003366;
+    --background-color: #f0f0f0;
+    --text-color: #003366;
+    --card-bg: rgba(240, 240, 240, 0.8);
+    --card-bg-hover: rgba(230, 230, 230, 0.9);
+    --card-border: rgba(200, 200, 200, 0.8);
+    --card-border-hover: rgba(0, 51, 102, 0.4);
+    --text-shadow: rgba(0, 51, 102, 0.3);
     --shadow-size-large: 10px;
     --shadow-size-medium: 8px;
     --shadow-size-small: 6px;
-    --card-shadow: rgba(160, 160, 160, 0.1);
-    --card-shadow-hover: rgba(160, 160, 160, 0.15);
-    --glow-shadow: rgba(0, 180, 216, 0.2);
+    --card-shadow: rgba(200, 200, 200, 0.5);
+    --card-shadow-hover: rgba(200, 200, 200, 0.7);
+    --glow-shadow: rgba(0, 51, 102, 0.2);
 }
 
 * {
@@ -54,7 +54,7 @@ canvas {
 
 .container {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     position: relative;
     z-index: 10;
@@ -90,7 +90,9 @@ header {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    margin-top: 2rem;
+    margin: 2rem auto 4rem;
+    width: 98%;
+    max-width: 1600px;
 }
 
 .translation-box {
@@ -104,7 +106,7 @@ header {
     box-shadow: 0 8px 32px var(--card-shadow);
     position: relative;
     overflow: hidden;
-    height: 500px;
+    min-height: calc(100vh - 300px);
     display: flex;
     flex-direction: column;
 }
@@ -121,6 +123,7 @@ header {
     flex: 1;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 textarea {
@@ -154,7 +157,7 @@ select {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
     border-radius: 8px;
-    padding: 0.5rem 1rem;
+    padding: 0.8rem 1.2rem;
     color: var(--text-color);
     font-family: var(--body-font);
     font-size: 1rem;
@@ -176,8 +179,20 @@ select:focus {
 }
 
 select option {
-    background-color: rgba(30, 30, 70, 0.9);
-    color: var(--text-color);
+    background-color: rgba(240, 240, 240, 0.95);
+    color: #003366;
+    padding: 1rem;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(200, 200, 200, 0.1);
+}
+
+select option:hover {
+    background-color: rgba(230, 230, 230, 0.9);
+}
+
+select option:checked {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 button {
@@ -185,7 +200,7 @@ button {
     border: none;
     border-radius: 8px;
     padding: 0.5rem 1.5rem;
-    color: var(--text-color);
+    color: #ffffff;
     font-family: var(--body-font);
     font-size: 1rem;
     cursor: pointer;
@@ -202,6 +217,20 @@ button:hover {
 
 button:active {
     transform: translateY(0);
+}
+
+#copy-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: #003366;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+#copy-icon:hover {
+    color: var(--primary-color);
 }
 
 @media (max-width: 768px) {

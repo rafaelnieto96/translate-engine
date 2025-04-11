@@ -34,8 +34,8 @@ function drawGradientBackground(c1, c2) {
 }
 
 function draw() {
-    let color1 = color(20, 20, 50);
-    let color2 = color(40, 20, 60);
+    let color1 = color(240, 240, 240);  // Gris claro
+    let color2 = color(230, 230, 230);  // Un tono ligeramente más oscuro
     drawGradientBackground(color1, color2);
 
     neurons.forEach(neuron => {
@@ -57,7 +57,7 @@ class Neuron {
         this.pulse = 0;
         const baseSize = window.innerWidth < 768 ? 6 : 8;
         this.targetSize = random(baseSize, baseSize * 1.8);
-        this.hue = random(190, 210);
+        this.hue = 210; // Azul oscuro
     }
 
     update() {
@@ -83,13 +83,13 @@ class Neuron {
         let glowSize = this.targetSize * (1 + this.pulse * 2);
         let alpha = 150 + 105 * sin(frameCount * 0.1);
 
-        fill(this.hue, 200, 255, alpha * 0.5);
+        fill(0, 51, 102, alpha * 0.5); // Azul oscuro
         noStroke();
         ellipse(this.pos.x, this.pos.y, glowSize);
 
-        stroke(this.hue, 200, 255, alpha);
+        stroke(0, 51, 102, alpha); // Azul oscuro
         strokeWeight(window.innerWidth < 768 ? 1.5 : 2);
-        fill(20, 30, 50);
+        fill(240, 240, 240); // Gris claro
         ellipse(this.pos.x, this.pos.y, this.targetSize);
     }
 }
@@ -112,7 +112,7 @@ function drawNeuralConnections() {
                 let pulse = (sin(frameCount * pulseSpeed + dist * 0.01) + 1) * 0.5;
                 alpha *= pulse;
 
-                stroke(a.hue, 200, 255, alpha);
+                stroke(0, 51, 102, alpha); // Azul oscuro
                 strokeWeight(lineWidth);
                 line(a.pos.x, a.pos.y, b.pos.x, b.pos.y);
             }
@@ -122,7 +122,7 @@ function drawNeuralConnections() {
 
 function globalPulseEffect() {
     noFill();
-    stroke(190, 100, 255, window.innerWidth < 768 ? 40 : 70);
+    stroke(0, 51, 102, window.innerWidth < 768 ? 40 : 70); // Azul oscuro
     strokeWeight(window.innerWidth < 768 ? 1 : 1.5);
     let pulseSize = (frameCount % 120) * (window.innerWidth < 768 ? 3 : 4);
     ellipse(mouseX, mouseY, pulseSize, pulseSize);
