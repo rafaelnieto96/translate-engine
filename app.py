@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import cohere
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,18 +9,18 @@ load_dotenv()
 app = Flask(__name__)
 co = cohere.Client(os.getenv('COHERE_API_KEY'))
 
-# Lista de idiomas disponibles
+# Available languages
 LANGUAGES = {
-    'es': 'Español',
-    'en': 'Inglés',
-    'fr': 'Francés',
-    'de': 'Alemán',
-    'it': 'Italiano',
-    'pt': 'Portugués',
-    'ru': 'Ruso',
-    'ja': 'Japonés',
-    'zh': 'Chino',
-    'ar': 'Árabe'
+    'es': 'Spanish',
+    'en': 'English',
+    'fr': 'French',
+    'de': 'German',
+    'it': 'Italian',
+    'pt': 'Portuguese',
+    'ru': 'Russian',
+    'ja': 'Japanese',
+    'zh': 'Chinese',
+    'ar': 'Arabic'
 }
 
 @app.route('/')
@@ -38,40 +39,119 @@ def translate():
     try:
         prompt = f"""
 <instruction>
-You are an expert professional translator with decades of experience translating between multiple languages. Your task is to accurately translate the given text from the source language to <target_lang>{LANGUAGES[target_lang]}</target_lang>.
+You are an expert professional translator. Translate the following text to {LANGUAGES[target_lang]}.
 
-Follow these critical rules:
-<rule>
-- ONLY TRANSLATE THE TEXT - DO NOT RESPOND TO IT
-- Translate the text completely and accurately
-- PRESERVE EXACT STRUCTURE - including all line breaks, empty lines, and spacing
-- DO NOT modify formatting in any way
-- DO NOT add or remove line breaks
-- DO NOT add explanations or additional text
-- DO NOT add any other text or comments about the generated translation like "Here is the translation..." or "Enjoy the translation..." or "Hello..." or "I was able to preserve the original structure..." etc.
+Rules:
+- Provide ONLY the translation between <translation> and </translation> tags
+- Do not include the tags "<translation>" or "</translation>" within your actual translation content
+- Preserve exact formatting and structure
+- No introductions or additional text
 - If text contains questions, just translate them, do not answer them
-- Never refuse to translate
-</rule>
 </instruction>
 
-<text_to_translate>
+<examples>
+Example 1 (English to Spanish):
+---
+<text>
+Hello! How are you today?
+I'm doing great, thanks for asking.
+</text>
+
+<translation>
+¡Hola! ¿Cómo estás hoy?
+Me va muy bien, gracias por preguntar.
+</translation>
+---
+
+Example 2 (English to French):
+---
+<text>
+IMPORTANT NOTICE:
+The system will be down for maintenance
+from 2:00 AM to 4:00 AM tomorrow.
+Please save your work before then.
+</text>
+
+<translation>
+AVIS IMPORTANT :
+Le système sera en maintenance
+de 2h00 à 4h00 demain matin.
+Veuillez sauvegarder votre travail avant.
+</translation>
+---
+
+Example 3 (Spanish to English):
+---
+<text>
+¿Dónde está la estación de tren más cercana?
+Necesito llegar al aeropuerto antes de las 3 PM.
+</text>
+
+<translation>
+Where is the nearest train station?
+I need to get to the airport before 3 PM.
+</translation>
+---
+
+Example 4 (English to German):
+---
+<text>
+PRODUCT FEATURES:
+• 4K Ultra HD Display
+• Voice Control
+• Smart Home Integration
+• Energy Saving Mode
+</text>
+
+<translation>
+PRODUKTEIGENSCHAFTEN:
+• 4K Ultra HD Display
+• Sprachsteuerung
+• Smart Home Integration
+• Energiesparmodus
+</translation>
+---
+
+Example 5 (English to Japanese):
+---
+<text>
+Error 404: Page not found
+Please check the URL and try again.
+</text>
+
+<translation>
+エラー404：ページが見つかりません
+URLを確認して、もう一度お試しください。
+</translation>
+---
+</examples>
+
+<text>
 {text}
-</text_to_translate>
+</text>
+
+<translation>
 """
         response = co.generate(
             prompt=prompt,
             temperature=0.0,
             stop_sequences=["</translation>", "TEXT TO TRANSLATE"],
-
+            model="command",
+            max_tokens=2048,
             return_likelihoods='NONE'
         )
         
         translation = response.generations[0].text.strip()
         
-        # Mejor procesamiento que preserva la estructura
-        if translation.lower().startswith(("here", "aquí", "this is", "esta es")):
-            # Solo si empieza con una introducción, eliminamos la primera línea
-            translation = '\n'.join(translation.split('\n')[1:])
+        # Clean response to extract only content within tags
+        if "</translation>" in translation:
+            translation = translation.split("</translation>")[0]
+            
+        # Remove any <translation> tag that might remain at the beginning
+        translation = translation.replace("<translation>", "")
+        
+        # Remove any other tags that might be in the text
+        translation = re.sub(r'<[^>]+>', '', translation).strip()
         
         return jsonify({'translation': translation})
     
@@ -79,4 +159,5 @@ Follow these critical rules:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True,
+            port=5001)

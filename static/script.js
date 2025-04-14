@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function translateText() {
         const text = inputText.value.trim();
         if (!text) {
-            outputText.value = 'Por favor, ingresa un texto para traducir';
+            outputText.value = 'Please enter text to translate';
             return;
         }
 
@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
             translateBtn.disabled = true;
             translateBtn.classList.add('translating');
             
-            // Limpiar contenido previo
-            outputText.value = '';
+            // Mostrar mensaje de generación
+            outputText.value = 'Generating...';
             
-            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Traduciendo...';
+            translateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Translating...';
 
             const response = await fetch('/translate', {
                 method: 'POST',
@@ -34,20 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
 
-            if (response.ok) {
+            if (data.translation) {
                 outputText.value = data.translation;
             } else {
-                outputText.value = `Error: ${data.error}`;
+                console.error('Translation error:', data.error);
+                outputText.value = 'Oops, something went wrong';
             }
         } catch (error) {
-            outputText.value = 'Error al conectar con el servidor';
-            console.error('Error:', error);
+            console.error('Request error:', error);
+            outputText.value = 'Oops, something went wrong';
         } finally {
             translateBtn.disabled = false;
             translateBtn.classList.remove('translating');
-            translateBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Traducir';
+            translateBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> Translate';
         }
     }
 
@@ -58,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Feedback visual
         const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
         setTimeout(() => {
             copyBtn.innerHTML = originalText;
         }, 2000);
