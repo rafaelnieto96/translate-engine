@@ -159,5 +159,7 @@ URLを確認して、もう一度お試しください。
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True,
+    # Debug mode only in local development
+    debug_mode = os.getenv('FLASK_ENV') == 'development'
+    app.run(debug=debug_mode,
             port=5001)
